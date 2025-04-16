@@ -15,10 +15,11 @@ This guide will help you create a **clean, conflict-free Python machine learning
    - [Activating Your Environment](#activating-your-environment)  
    - [Installing Required Packages](#installing-required-packages)  
    - [Verifying Your Installation](#verifying-your-installation)
-3. [Working with Jupyter Notebooks](#working-with-jupyter-notebooks)
-4. [Dataset & Log Storage Guidelines](#dataset--log-storage-guidelines)  
-5. [Troubleshooting Common Issues](#troubleshooting-common-issues)  
-6. [Quick Reference Commands](#quick-reference-commands)
+3. [Working with JupyterLab](#working-with-jupyterlab)
+4. [Smart GPU Selection](#smart-gpu-selection)
+5. [Dataset & Log Storage Guidelines](#dataset--log-storage-guidelines)  
+6. [Troubleshooting Common Issues](#troubleshooting-common-issues)  
+7. [Quick Reference Commands](#quick-reference-commands)
 
 ---
 
@@ -115,6 +116,7 @@ Once your environment is activated:
    pip install git+https://github.com/huggingface/transformers.git
    pip install datasets
    pip install monai
+   pip install pynvml
    ```
 
 #### ⚠️ Installation Best Practices
@@ -154,6 +156,42 @@ jupyter lab --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"
 ```
 
 Follow your instructor's guidance for remote access or port forwarding if needed.
+
+## Smart GPU Selection
+
+When working on shared systems, it's important to use the GPU with the most available memory. Add this script to the beginning of your notebooks to automatically select the optimal GPU:
+
+```python
+import torch
+
+def get_best_gpu():
+    """Selects the GPU with the most available memory."""
+    import pynvml
+    pynvml.nvmlInit()
+    device_count = pynvml.nvmlDeviceGetCount()
+    max_free_mem = 0
+    best_gpu = 0
+    for i in range(device_count):
+        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+        mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        free_mem = mem_info.free
+        if free_mem > max_free_mem:
+            max_free_mem = free_mem
+            best_gpu = i
+    pynvml.nvmlShutdown()
+    return best_gpu
+
+# Use the best GPU with most free memory, or fallback to CPU
+if torch.cuda.is_available():
+    best_gpu = get_best_gpu()
+    device = torch.device(f"cuda:{best_gpu}")
+    print(f"Using GPU: cuda:{best_gpu}")
+else:
+    device = torch.device("cpu")
+    print("Using CPU")
+```
+
+Add this code at the beginning of your notebooks to ensure you're always using the optimal GPU. This helps avoid memory conflicts with other users and maximizes your training performance.
 
 When finished with your work, deactivate your environment:
 
@@ -211,7 +249,7 @@ pip install [package-name]
 | **Activate environment** | `source "$HOME/bioe486/venv/bioe486/bin/activate"` |
 | **Upgrade pip** | `pip install --upgrade pip` |
 | **Install PyTorch** | `pip install torch torchvision torchaudio` |
-| **Install ML packages** | `pip install numpy pandas matplotlib scikit-learn jupyterlab datasets monai git+https://github.com/huggingface/transformers.git` |
+| **Install ML packages** | `pip install numpy pandas matplotlib scikit-learn jupyterlab datasets monai pynvml git+https://github.com/huggingface/transformers.git` |
 | **Launch JupyterLab** | `jupyter lab --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"` |
 | **Access personal datasets** | `/shared/BIOE486/SP25/users/$USER/datasets` |
 | **Access personal logs** | `/shared/BIOE486/SP25/users/$USER/logs` |
