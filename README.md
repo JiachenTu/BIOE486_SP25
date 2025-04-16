@@ -111,7 +111,10 @@ Once your environment is activated:
 
 3. **Install core ML libraries**:
    ```bash
-   pip install numpy pandas matplotlib scikit-learn jupyter
+   pip install numpy pandas matplotlib scikit-learn jupyterlab
+   pip install git+https://github.com/huggingface/transformers.git
+   pip install datasets
+   pip install monai
    ```
 
 #### ⚠️ Installation Best Practices
@@ -138,7 +141,7 @@ You should see `CUDA available: True` if GPU acceleration is accessible.
 
 ---
 
-## Working with Jupyter Notebooks
+## Working with JupyterLab
 
 Store your notebooks in your home directory where they can access your virtual environment:
 
@@ -146,8 +149,8 @@ Store your notebooks in your home directory where they can access your virtual e
 # Create a notebooks directory
 mkdir -p "$HOME/bioe486/notebooks"
 
-# Launch Jupyter server
-jupyter notebook --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"
+# Launch JupyterLab server
+jupyter lab --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"
 ```
 
 Follow your instructor's guidance for remote access or port forwarding if needed.
@@ -208,12 +211,12 @@ pip install [package-name]
 | **Activate environment** | `source "$HOME/bioe486/venv/bioe486/bin/activate"` |
 | **Upgrade pip** | `pip install --upgrade pip` |
 | **Install PyTorch** | `pip install torch torchvision torchaudio` |
-| **Install ML packages** | `pip install numpy pandas matplotlib scikit-learn jupyter` |
-| **Launch Jupyter** | `jupyter notebook --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"` |
+| **Install ML packages** | `pip install numpy pandas matplotlib scikit-learn jupyterlab datasets monai git+https://github.com/huggingface/transformers.git` |
+| **Launch JupyterLab** | `jupyter lab --no-browser --port=8888 --notebook-dir="$HOME/bioe486/notebooks"` |
 | **Access personal datasets** | `/shared/BIOE486/SP25/users/$USER/datasets` |
 | **Access personal logs** | `/shared/BIOE486/SP25/users/$USER/logs` |
 | **Deactivate environment** | `deactivate` |
 
 ---
 
-**Happy ML coding!**
+**Happy ML coding — see you in class!**
